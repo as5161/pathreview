@@ -43,3 +43,21 @@ named failing test for it (`test_none_context_chunk_text` in
 **Setup confirmation:** [ ] App runs locally at localhost:5173
 
 **Cohort ledger:** [ ] Issue added to cohort ledger
+
+## Week 8 — Reproduction & solution planning
+
+**Reproduction commit link:** https://github.com/as5161/pathreview/commit/a6e345966a76200f9d575c410a820954b4f6e06b
+
+**Reproduction summary:**
+Ran the repro from the issue directly (`FaithfulnessChecker().check('Knows Python.', [{'text': None}])`)
+and the named failing test `test_none_context_chunk_text` — both raise
+`TypeError: sequence item 0: expected str instance, NoneType found` at
+`faithfulness_checker.py:34`, confirming the root cause described in #153.
+
+**PLAN.md link:** https://github.com/as5161/pathreview/blob/fix/153-faithfulness-checker-none-text/PLAN.md
+
+**Walkthrough video (recommended):** [not recorded]
+
+**Blockers or open questions:**
+None currently — `relevance_scorer.py` has the same defensive-default pattern
+but is out of scope for this issue; flagged in PLAN.md as a possible follow-up.
