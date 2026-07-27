@@ -40,9 +40,9 @@ named failing test for it (`test_none_context_chunk_text` in
 
 **Branch name:** fix/153-faithfulness-checker-none-text
 
-**Setup confirmation:** [ ] App runs locally at localhost:5173
+**Setup confirmation:** [x] App runs locally at localhost:5173
 
-**Cohort ledger:** [ ] Issue added to cohort ledger
+**Cohort ledger:** [x] Issue added to cohort ledger
 
 ## Week 8 — Reproduction & solution planning
 
