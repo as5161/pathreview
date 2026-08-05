@@ -35,12 +35,12 @@ class FaithfulnessChecker:
             return 0.5  # Default to neutral if no extractable claims
 
         # Concatenate context text
-        # REPRODUCED (#153): chunk.get("text", "") only substitutes "" for a
-        # *missing* key. If "text" is present but explicitly None, .get()
-        # returns None, and the join below raises:
-        #   TypeError: sequence item 0: expected str instance, NoneType found
-        context_text = " ".join([chunk.get("text", "") for chunk in context_chunks])
-
+        # Fix for #153: chunk.get("text", "") only substitutes "" for a
+        # *missing* key. A chunk can have "text" present but set to None
+        # (e.g. an unparseable source section), which .get() passes through
+        # unchanged and crashes the join below. `or ""` normalizes both a
+        # missing key and an explicit None to an empty string.
+        context_text = " ".join([chunk.get("text") or "" for chunk in context_chunks])
         # Check each claim for support
         supported = 0
         for claim in claims:
