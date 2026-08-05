@@ -92,3 +92,30 @@ failures documented per the assignment's guidance.
 
 **Blockers:**
 None currently.
+
+### Check-in 2 (end of week)
+
+**PR link:** https://github.com/as5161/pathreview/pull/1
+
+**Branch:** fix/153-faithfulness-checker-none-text
+
+**What you built:**
+Fixed a crash in `FaithfulnessChecker.check()` where a context chunk with
+`text: None` raised a `TypeError` instead of being treated like a missing
+key. Changed `chunk.get("text", "")` to `chunk.get("text") or ""` so both
+cases normalize to an empty string.
+
+**Tests added or updated:**
+`tests/unit/test_faithfulness_checker.py` — added `test_mixed_none_and_real_text_chunks`,
+`test_all_chunks_have_none_text`, and `test_empty_string_text_in_chunk`;
+tightened `test_all_chunks_have_none_text` to assert `score == 0.0` instead
+of a no-op range check; added a real assertion to the previously-silent
+`test_common_words_filtered_in_overlap`.
+
+**Self-review confirmation:** [x] make check passes  [x] make test-unit passes
+*(with documented pre-existing failures unrelated to this change — see PR
+description for the full breakdown: ~52 pre-existing test-unit failures and
+~180 pre-existing lint errors across unrelated files, confirmed via a
+before/after diff that none are affected by this PR)*
+
+**Draft PR feedback received from:** Jen
