@@ -191,14 +191,16 @@ class TestFaithfulnessChecker:
 
     def test_common_words_filtered_in_overlap(self, checker):
         """Test that common stop words are filtered in overlap calculation."""
-        # This test verifies that "the", "is", "and" etc. don't count as meaningful overlap
         claim = "The project is well documented"
         context = "The project is poorly documented"  # Opposite meaning but same stop words
 
-        checker._is_supported(claim, context)
+        supported = checker._is_supported(claim, context)
 
-        # Despite word overlap, should look for meaningful overlap (not stop words)
-        # This depends on implementation
+        # Known limitation: "project" and "documented" overlap (2 meaningful
+        # tokens) even though "well"/"poorly" reverse the actual meaning, so
+        # the simple keyword-overlap heuristic marks this supported. This
+        # test documents that limitation rather than asserting ideal behavior.
+        assert supported is True
 
     def test_minimum_overlap_required(self, checker):
         """Test that minimum meaningful overlap is required for support."""
@@ -278,3 +280,13 @@ class TestFaithfulnessChecker:
 
         assert isinstance(score, float)
         assert 0.0 <= score <= 1.0
+
+    def test_empty_string_text_in_chunk(self, checker):
+        """An empty string is distinct from None but should be handled
+        the same way — contributing nothing to the context, no crash."""
+        feedback = "Has Python skills"
+        context_chunks = [{"text": ""}]
+
+        score = checker.check(feedback, context_chunks)
+
+        assert score == 0.0
