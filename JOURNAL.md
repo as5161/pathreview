@@ -119,3 +119,74 @@ description for the full breakdown: ~52 pre-existing test-unit failures and
 before/after diff that none are affected by this PR)*
 
 **Draft PR feedback received from:** Jen
+
+### Reviewer feedback
+
+**Feedback received:** [x] No — still awaiting review
+
+**Summary of feedback:**
+No maintainer/reviewer comments came in directly on the PR — per this
+term's course note, PR-level reviewer feedback isn't an active feature in
+Summer 2026. Separately, I did get peer feedback via Slack during Week 9
+(documented in Check-in 2), which led to real changes: tightening the
+`test_all_chunks_have_none_text` assertion from a loose range check to an
+exact `score == 0.0`, and adding a new test for the `{"text": ""}` case.
+
+**How you responded:**
+N/A for this section — the Week 9 Slack feedback was already addressed and
+documented in Check-in 2 / commit `bdbd333`.
+
+### Reflection
+
+**What was harder than you expected?**
+Getting the local environment running ate more time than the actual bug fix
+did. Docker Desktop wouldn't start because its WSL2 backend wasn't updated,
+and the fix required a full WSL2 update plus a system reboot before Docker's
+engine would even respond to `docker info`. Separately, PowerShell vs. Git
+Bash caused repeated confusion — `make`, `source`, and Unix-style commands
+silently failed or behaved differently depending on which shell I was
+actually in, and I lost time re-running commands in the wrong directory more
+than once. The actual code fix was a one-line change; getting to the point
+where I could run and verify it took most of the effort.
+
+**What did you learn about working in a large codebase?**
+The biggest lesson was that local tooling and actual CI can disagree, and
+you have to check rather than assume. My local `mypy` pre-commit hook
+flagged 27 errors in a test file I touched, which looked like it would
+block my commit entirely — but reading the actual `.github/workflows/ci.yml`
+showed the real CI typecheck job never scans `tests/` at all. The stricter
+local hook wasn't protecting anything the project actually enforces. I also
+learned that a codebase can have a large amount of pre-existing failing
+tests and lint errors (53 failing tests, ~180 lint errors, unrelated to my
+change) and that's normal — the actual bar is "don't make it worse," not
+"leave everything green."
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for things I could verify immediately — reproducing the
+bug, running the test suite before and after a change, diffing lint output
+between baseline and modified code to prove what was and wasn't
+pre-existing. It was much less useful, and actively risky, when I tried to
+use it to shortcut the human peer-review requirement — an AI-generated code
+review is a genuinely different thing from a classmate or mentor actually
+reading my PR, and conflating the two would have meant misrepresenting what
+happened in a graded document. The most valuable use of AI this module
+wasn't writing code for me, it was checking claims I would have otherwise
+had to trust blindly (like whether a lint error was new or pre-existing).
+
+**What would you do differently if you started over?**
+I'd get the local dev environment fully running before picking an issue, not
+after — I chose #153 based on how self-contained the code fix looked, but
+the environment setup (Docker/WSL2) turned out to be the real bottleneck and
+was unrelated to which issue I'd picked. I'd also write my own test
+assertions more critically the first time — my first draft of the new tests
+just checked `0.0 <= score <= 1.0`, which is true for almost any successful
+run and doesn't actually prove the fix works; it took outside feedback to
+catch that.
+
+**What are you most proud of from this module?**
+Diagnosing the mypy/CI scope mismatch myself instead of either blindly
+fixing 25 unrelated pre-existing type errors or just bypassing the hook
+without understanding why. Reading the actual CI config to confirm the local
+hook was stricter than what really gated the PR felt like a genuine "figure
+out how the project actually works" moment, not just following
+instructions.
